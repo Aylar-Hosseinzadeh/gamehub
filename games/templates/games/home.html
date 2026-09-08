@@ -1,24 +1,45 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub</title>
+
+    <link rel="stylesheet" href="{% static 'games/style.css' %}">
+</head>
 </head>
 <body>
 
-    <h1>GameHub</h1>
-    <h2>Games</h2>
+    <header class="site-header">
+        <h1>GameHub</h1>
+    </header>
 
-    {% for game in games %}
-        <div>
-        <h3>{{ game.title }}</h3>
+    <main>
+        <section class="games-section">
 
-        <p>Developer: {{ game.developer }}</p>
-        <p>Rating: {{ game.rating }}</p>
-        <p>Release date: {{ game.release_date }}</p>
-    </div>
-    {% endfor %}
+            <h2>Games</h2>
+
+            <div class="games-grid">
+
+                {% for game in games %}
+                    <article class="game-card">
+
+                        <h3>{{ game.title }}</h3>
+
+                        <p>Developer: {{ game.developer }}</p>
+                        <p>Rating: {{ game.rating }}</p>
+                        <p>Release date: {{ game.release_date }}</p>
+
+                    </article>
+                {% empty %}
+                    <p>No games available.</p>
+                {% endfor %}
+
+            </div>
+
+        </section>
+    </main>
 
 </body>
 </html>
