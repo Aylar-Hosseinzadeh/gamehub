@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Game - GameHub</title>
+</head>
+
+<body>
+
+    <h1>Add a New Game</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {{ form }}
+
+        <button type="submit">Add Game</button>
+    </form>
+
+    <a href="{% url 'game_list' %}">← Back to games</a>
+
+</body>
+</html>

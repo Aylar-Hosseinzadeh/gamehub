@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('games/', views.home, name='game_list'),
+    path('games/add/', views.add_game, name='game_add'),
     path('games/<int:pk>/', views.detail, name='game_detail' ),
 ]
