@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from .models import Game
 from .forms import GameForm
@@ -19,6 +19,7 @@ def add_game(request):
 
         if form.is_valid():
             form.save()
+            return redirect("game_list")
 
     else:
         form = GameForm()
