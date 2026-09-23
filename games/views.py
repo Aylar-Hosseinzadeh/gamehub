@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
+from django.contrib.admin.views.decorators import staff_member_required
 from .models import Game
 from .forms import GameForm
 
@@ -34,6 +34,7 @@ def detail(request, pk):
 
     return render(request, "games/detail.html", {"game": game})
 
+@staff_member_required(login_url="/login/")
 def add_game(request):
     if request.method == "POST":
         form = GameForm(request.POST)
