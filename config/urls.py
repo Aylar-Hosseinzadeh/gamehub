@@ -25,5 +25,7 @@ urlpatterns = [
     path('games/add/', views.add_game, name='game_add'),
     path('games/<int:pk>/', views.detail, name='game_detail' ),
     path('login/', views.login_view, name="login"),
-    path('logout/', views.logout_view, name= "logout")
+    path('logout/', views.logout_view, name= "logout"),
+    path('games/<int:pk>/add_to_library/', views.add_to_library, name= "add_to_library"),
+    path('games/<int:pk>/remove_from_library/', views.remove_from_library, name= "remove_from_library")
 ]

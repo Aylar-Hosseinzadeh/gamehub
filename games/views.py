@@ -32,7 +32,36 @@ def logout_view(request):
 def detail(request, pk):
     game = get_object_or_404(Game, pk=pk)
 
-    return render(request, "games/detail.html", {"game": game})
+    in_library = False
+
+    if request.user.is_authenticated:
+        in_library = request.user.games.filter(pk=game.pk).exists()
+
+    return render(
+        request,
+        "games/detail.html",
+        {
+            "game": game,
+            "in_library": in_library,
+        }
+    )
+
+from django.contrib.auth.decorators import login_required
+@login_required(login_url="/login/")
+def add_to_library(request, pk):
+    game = get_object_or_404(Game, pk=pk)
+
+    game.users.add(request.user)
+
+    return redirect("game_detail", pk=game.pk)
+
+@login_required(login_url="/login/")
+def remove_from_library(request, pk):
+    game = get_object_or_404(Game, pk=pk)
+
+    game.users.remove(request.user)
+
+    return redirect("game_detail", pk=game.pk)
 
 @staff_member_required(login_url="/login/")
 def add_game(request):
