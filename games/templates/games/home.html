@@ -22,6 +22,19 @@
         <h1>GameHub</h1>
     </header>
 
+    <form method="GET" action="{% url 'game_list' %}">
+        <input
+            type="text"
+            name="search"
+            placeholder="Search games..."
+            value="{{ search_query|default:'' }}"
+        >
+
+        <button type="submit">
+            Search
+        </button>
+    </form>
+
     <main>
         <section class="games-section">
 

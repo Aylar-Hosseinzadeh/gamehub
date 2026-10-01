@@ -5,10 +5,18 @@ from .models import Game
 from .forms import GameForm
 
 def home(request):
-    games = Game.objects.all()
+    search_query = request.GET.get("search")
+    if search_query:
+        games = Game.objects.filter(
+            title__icontains=search_query
+        )
+    else:
+        games = Game.objects.all()
+
     return render(request, "games/home.html", {"games": games})
 
 def login_view(request):
+    print(request.GET)
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
