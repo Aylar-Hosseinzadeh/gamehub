@@ -6,14 +6,24 @@ from .forms import GameForm
 
 def home(request):
     search_query = request.GET.get("search")
-    if search_query:
-        games = Game.objects.filter(
-            title__icontains=search_query
-        )
-    else:
-        games = Game.objects.all()
+    rating = request.GET.get("rating")
 
-    return render(request, "games/home.html", {"games": games})
+    games = Game.objects.all()
+    if search_query:
+        games = games.filter(title__icontains=search_query)
+
+    if rating:
+        games = games.filter(rating__gte=rating)
+
+    return render(
+        request,
+        "games/home.html",
+        {
+            "games": games,
+            "search_query": search_query,
+            "rating" : rating,
+        }
+    )
 
 def login_view(request):
     print(request.GET)

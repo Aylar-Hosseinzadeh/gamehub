@@ -33,6 +33,12 @@
         <button type="submit">
             Search
         </button>
+        
+        <select name="rating">
+            <option value="" {% if not rating %}selected{% endif %}>All Ratings</option>
+            <option value="8" {% if rating == "8" %}selected{% endif %}>8+</option>
+            <option value="9" {% if rating == "9" %}selected{% endif %}>9+</option>
+        </select>
     </form>
 
     <main>
