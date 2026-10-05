@@ -1,13 +1,12 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+
 <head>
     <meta charset="UTF-8">
     <title>GameHub</title>
 
     <link rel="stylesheet" href="{% static 'games/style.css' %}">
-</head>
 </head>
 <body>
 
@@ -78,6 +77,29 @@
                 {% endfor %}
 
             </div>
+
+            {% if games.has_other_pages %}
+                <div class="pagination">
+
+                    {% if games.has_previous %}
+                        <a href="?{{ query_string }}&page={{ games.previous_page_number }}">
+                            Previous
+                        </a>
+                    {% endif %}
+
+                    <span>
+                        Page {{ games.number }} of {{ games.paginator.num_pages }}
+                    </span>
+
+                    {% if games.has_next %}
+                        <a href="?{{ query_string }}&page={{ games.next_page_number }}">
+                            Next
+                        </a>
+                    {% endif %}
+
+                </div>
+            {% endif %}
+
 
         </section>
     </main>

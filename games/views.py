@@ -3,11 +3,17 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.admin.views.decorators import staff_member_required
 from .models import Game
 from .forms import GameForm
+from django.core.paginator import Paginator
 
 def home(request):
     search_query = request.GET.get("search")
     rating = request.GET.get("rating")
     sort = request.GET.get("sort")
+    page_number = request.GET.get("page")
+    params = request.GET.copy()
+    params.pop("page", None)
+
+    query_string = params.urlencode()
 
     games = Game.objects.all()
     if search_query:
@@ -26,14 +32,18 @@ def home(request):
     if sort in sort_options:
         games = games.order_by(sort_options[sort])
 
+    paginator = Paginator(games, 2)
+    page_obj = paginator.get_page(page_number)
+
     return render(
         request,
         "games/home.html",
         {
-            "games": games,
+            "games": page_obj,
             "search_query": search_query,
             "rating" : rating,
             "sort" : sort,
+            "query_string" : query_string,
         }
     )
 
