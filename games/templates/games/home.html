@@ -39,6 +39,18 @@
             <option value="8" {% if rating == "8" %}selected{% endif %}>8+</option>
             <option value="9" {% if rating == "9" %}selected{% endif %}>9+</option>
         </select>
+
+        <select name="sort">
+            <option value="" {% if not sort %}selected{% endif %}>Default</option>
+
+            <option value="rating_desc" {% if sort == "rating_desc" %}selected{% endif %}>Rating: High → Low</option>
+
+            <option value="rating_asc" {% if sort == "rating_asc" %}selected{% endif %}>Rating: Low → High</option>
+
+            <option value="title_asc" {% if sort == "title_asc" %}selected{% endif %}>Title: A → Z</option>
+
+            <option value="title_desc" {% if sort == "title_desc" %}selected{% endif %}>Title: Z → A</option>
+        </select>
     </form>
 
     <main>

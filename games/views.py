@@ -7,6 +7,7 @@ from .forms import GameForm
 def home(request):
     search_query = request.GET.get("search")
     rating = request.GET.get("rating")
+    sort = request.GET.get("sort")
 
     games = Game.objects.all()
     if search_query:
@@ -15,6 +16,16 @@ def home(request):
     if rating:
         games = games.filter(rating__gte=rating)
 
+    sort_options = {
+        "rating_desc": "-rating",
+        "rating_asc": "rating",
+        "title_asc": "title",
+        "title_desc": "-title",
+    }
+
+    if sort in sort_options:
+        games = games.order_by(sort_options[sort])
+
     return render(
         request,
         "games/home.html",
@@ -22,6 +33,7 @@ def home(request):
             "games": games,
             "search_query": search_query,
             "rating" : rating,
+            "sort" : sort,
         }
     )
 
