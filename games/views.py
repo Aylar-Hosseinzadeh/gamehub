@@ -5,7 +5,7 @@ from .models import Game
 from .forms import GameForm
 from django.core.paginator import Paginator
 
-def home(request):
+def game_list(request):
     search_query = request.GET.get("search")
     rating = request.GET.get("rating")
     sort = request.GET.get("sort")
@@ -37,7 +37,7 @@ def home(request):
 
     return render(
         request,
-        "games/home.html",
+        "games/game_list.html",
         {
             "games": page_obj,
             "search_query": search_query,
@@ -46,6 +46,9 @@ def home(request):
             "query_string" : query_string,
         }
     )
+
+def home(request):
+    return render(request, "games/home.html")
 
 def login_view(request):
     print(request.GET)

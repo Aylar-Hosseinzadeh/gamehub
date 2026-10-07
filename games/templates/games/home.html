@@ -1,108 +1,32 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub</title>
 
     <link rel="stylesheet" href="{% static 'games/style.css' %}">
 </head>
 <body>
 
-    {% if user.is_authenticated %}
-        <p>Welcome, {{ user.username }} 👋</p>
-        <a href="{% url 'logout' %}">Logout</a>
-    {% else %}
-        <p>You are not logged in.</p>
-    {% endif %}
-
     <header class="site-header">
         <h1>GameHub</h1>
     </header>
 
-    <form method="GET" action="{% url 'game_list' %}">
-        <input
-            type="text"
-            name="search"
-            placeholder="Search games..."
-            value="{{ search_query|default:'' }}"
-        >
-
-        <button type="submit">
-            Search
-        </button>
-        
-        <select name="rating">
-            <option value="" {% if not rating %}selected{% endif %}>All Ratings</option>
-            <option value="8" {% if rating == "8" %}selected{% endif %}>8+</option>
-            <option value="9" {% if rating == "9" %}selected{% endif %}>9+</option>
-        </select>
-
-        <select name="sort">
-            <option value="" {% if not sort %}selected{% endif %}>Default</option>
-
-            <option value="rating_desc" {% if sort == "rating_desc" %}selected{% endif %}>Rating: High → Low</option>
-
-            <option value="rating_asc" {% if sort == "rating_asc" %}selected{% endif %}>Rating: Low → High</option>
-
-            <option value="title_asc" {% if sort == "title_asc" %}selected{% endif %}>Title: A → Z</option>
-
-            <option value="title_desc" {% if sort == "title_desc" %}selected{% endif %}>Title: Z → A</option>
-        </select>
-    </form>
-
     <main>
-        <section class="games-section">
+        <section>
+            <h2>Welcome to GameHub</h2>
 
-            <h2>Games</h2>
+            <p>
+                Discover games and build your personal library.
+            </p>
 
-            <div class="games-grid">
-
-                {% for game in games %}
-                    <article class="game-card">
-
-
-                        <a href="{% url 'game_detail' game.pk %}">
-                            <h3>{{ game.title }}</h3>
-                        </a>
-
-                        <p>Developer: {{ game.developer }}</p>
-                        <p>Rating: {{ game.rating }}</p>
-                        <p>Release date: {{ game.release_date }}</p>
-
-                    </article>
-                {% empty %}
-                    <p>No games available.</p>
-                {% endfor %}
-
-            </div>
-
-            {% if games.has_other_pages %}
-                <div class="pagination">
-
-                    {% if games.has_previous %}
-                        <a href="?{{ query_string }}&page={{ games.previous_page_number }}">
-                            Previous
-                        </a>
-                    {% endif %}
-
-                    <span>
-                        Page {{ games.number }} of {{ games.paginator.num_pages }}
-                    </span>
-
-                    {% if games.has_next %}
-                        <a href="?{{ query_string }}&page={{ games.next_page_number }}">
-                            Next
-                        </a>
-                    {% endif %}
-
-                </div>
-            {% endif %}
-
-
+            <a href="{% url 'game_list' %}">
+                Browse Games
+            </a>
         </section>
     </main>
-
+    
 </body>
 </html>
