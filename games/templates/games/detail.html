@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ game.title }} - GameHub</title>
-</head>
-<body>
-    <h1>{{ game.title }}</h1>
+
+{% extends "games/base.html" %}
+
+{% block content %}
+
+<section class="game-detail">
+    <h2>{{ game.title }}</h2>
 
     <p>Developer: {{ game.developer }}</p>
     <p>Publisher: {{ game.publisher }}</p>
@@ -16,34 +14,26 @@
 
     {% if user.is_authenticated %}
 
-         {% if in_library %}
-
+        {% if in_library %}
             <form method="POST" action="{% url 'remove_from_library' game.pk %}">
                 {% csrf_token %}
-                <button type="submit">
-                    Remove from Library
-                </button>
-             </form>
-
+                <button type="submit">Remove from Library</button>
+            </form>
         {% else %}
-
             <form method="POST" action="{% url 'add_to_library' game.pk %}">
                 {% csrf_token %}
-                <button type="submit">
-                    + Add to Library
-                </button>
+                <button type="submit">+ Add to Library</button>
             </form>
-
         {% endif %}
-    
+
     {% else %}
-    
         <a href="{% url 'login' %}">
             Login to add this game to your library
         </a>
     {% endif %}
-    
-        <a href="{% url 'game_list' %}">← Back to games</a>
-    
-</body>
-</html>
+
+    <a href="{% url 'game_list' %}">← Back to games</a>
+</section>
+
+{% endblock %}
+
