@@ -4,6 +4,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from .models import Game
 from .forms import GameForm
 from django.core.paginator import Paginator
+from django.contrib import messages
 
 def game_list(request):
     search_query = request.GET.get("search")
@@ -64,7 +65,9 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
+            messages.success(request, "You have logged in successfully.")
             return redirect("game_list")
+        messages.error(request, "Invalid username or password.")
 
     return render(request, "games/login.html")
 
@@ -95,6 +98,7 @@ def add_to_library(request, pk):
     game = get_object_or_404(Game, pk=pk)
 
     game.users.add(request.user)
+    messages.success(request, "Game added to your library.")
 
     return redirect("game_detail", pk=game.pk)
 
@@ -103,6 +107,7 @@ def remove_from_library(request, pk):
     game = get_object_or_404(Game, pk=pk)
 
     game.users.remove(request.user)
+    messages.success(request, "Game removed from your library.")
 
     return redirect("game_detail", pk=game.pk)
 
