@@ -41,13 +41,13 @@
         <div class="games-grid">
             {% for game in games %}
                 <article class="game-card">
-                    <a href="{% url 'game_detail' game.pk %}">
+                     <a class="game-card-link" href="{% url 'game_detail' game.pk %}">
                         <h3>{{ game.title }}</h3>
-                    </a>
 
-                    <p>Developer: {{ game.developer }}</p>
-                    <p>Rating: {{ game.rating }}</p>
-                    <p>Release date: {{ game.release_date }}</p>
+                         <p>Developer: {{ game.developer }}</p>
+                         <p>Rating: {{ game.rating }}</p>
+                         <p>Release date: {{ game.release_date }}</p>
+                    </a>
                 </article>
             {% empty %}
                 <p>No games available.</p>

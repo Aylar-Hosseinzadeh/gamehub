@@ -1,8 +1,31 @@
+:root {
+    /* Colors */
+    --color-background: #111318;
+    --color-surface: #1B1E26;
+    --color-surface-hover: #262B36;
+
+    --color-accent: #8B7CFF;
+
+    --color-text: #E7E9EF;
+    --color-muted: #A6A9B5;
+
+    --color-border: #353945;
+
+    /* Layout */
+    --radius-card: 12px;
+    --space-card: 20px;
+    --space-page: 40px;
+    --space-element: 12px;
+    --space-grid: 20px;
+}
 
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 40px;
+    padding: var(--space-page);
+
+    background-color: var(--color-background);
+    color: var(--color-text);
 }
 
 .site-header {
@@ -15,26 +38,74 @@ body {
 
 .games-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-grid);
 }
 
 .game-card {
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
+    padding: var(--space-card);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .game-card:hover {
-    transform: translateY(-5px);
+    background-color: var(--color-surface-hover);
+    border-color: var(--color-accent);
+    transform: translateY(-4px);
 }
 
 .game-card h3 {
     margin-top: 0;
+    margin-bottom: var(--space-element);
+    font-size: 1.2rem;
 }
 
 .game-card p {
-    margin: 8px 0;
+    margin: var(--space-element) 0;
+    color: var(--color-muted);
+    line-height: 1.6;
 }
+
+a,
+a:visited,
+a:hover,
+a:active,
+a:focus {
+    color: var(--color-accent);
+}
+
+.game-card .game-card-link,
+.game-card .game-card-link:visited,
+.game-card .game-card-link:hover,
+.game-card .game-card-link:active,
+.game-card .game-card-link:focus {
+    text-decoration: none;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+
+    margin-bottom: 36px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+nav a {
+    text-decoration: none;
+}
+
+@media (max-width: 600px) {
+    :root {
+        --space-page: 16px;
+    }
+}
+
