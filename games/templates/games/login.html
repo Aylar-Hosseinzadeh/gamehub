@@ -2,17 +2,35 @@
 {% extends "games/base.html" %}
 
 {% block content %}
-    <h2>Login</h2>
+
+<section class="form-page">
+    <h1>Login</h1>
 
     <form method="post">
         {% csrf_token %}
 
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username">
+        <div class="form-field">
+            <label for="username">Username</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                class="form-input"
+            >
+        </div>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password">
+        <div class="form-field">
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-input"
+            >
+        </div>
 
         <button type="submit">Login</button>
     </form>
+</section>
+
 {% endblock %}
