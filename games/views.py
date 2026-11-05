@@ -5,6 +5,7 @@ from .models import Game
 from .forms import GameForm
 from django.core.paginator import Paginator
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 def game_list(request):
     search_query = request.GET.get("search")
@@ -71,6 +72,7 @@ def login_view(request):
 
     return render(request, "games/login.html")
 
+@require_POST
 def logout_view(request):
     logout(request)
     return redirect("game_list")
