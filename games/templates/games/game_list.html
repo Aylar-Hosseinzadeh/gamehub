@@ -3,29 +3,83 @@
 
 {% block content %}
     
-    <form method="GET" action="{% url 'game_list' %}">
-        <input
-            type="text"
-            name="search"
-            placeholder="Search games..."
-            value="{{ search_query|default:'' }}"
-        >
+    <form method="GET" action="{% url 'game_list' %}" class="game-filters">
 
-        <button type="submit">Search</button>
+        <div class="filter-group">
+            <label for="game-search" class="filter-label">
+                Search
+            </label>
 
-        <select name="rating">
-            <option value="" {% if not rating %}selected{% endif %}>All Ratings</option>
-            <option value="8" {% if rating == "8" %}selected{% endif %}>8+</option>
-            <option value="9" {% if rating == "9" %}selected{% endif %}>9+</option>
-        </select>
+            <input
+                type="search"
+                id="game-search"
+                name="search"
+                class="filter-control"
+                placeholder="Search games..."
+                value="{{ search_query|default:'' }}"
+            >
+        </div>
 
-        <select name="sort">
-            <option value="" {% if not sort %}selected{% endif %}>Default</option>
-            <option value="rating_desc" {% if sort == "rating_desc" %}selected{% endif %}>Rating: High → Low</option>
-            <option value="rating_asc" {% if sort == "rating_asc" %}selected{% endif %}>Rating: Low → High</option>
-            <option value="title_asc" {% if sort == "title_asc" %}selected{% endif %}>Title: A → Z</option>
-            <option value="title_desc" {% if sort == "title_desc" %}selected{% endif %}>Title: Z → A</option>
-        </select>
+        <div class="filter-group">
+            <label for="game-rating" class="filter-label">
+                Rating
+            </label>
+
+            <select
+                id="game-rating"
+                name="rating"
+                class="filter-control"
+            >
+                <option value="" {% if not rating %}selected{% endif %}>
+                    All Ratings
+                </option>
+
+                <option value="8" {% if rating == "8" %}selected{% endif %}>
+                    8+
+                </option>
+
+                <option value="9" {% if rating == "9" %}selected{% endif %}>
+                    9+
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="game-sort" class="filter-label">
+                Sort By
+            </label>
+
+            <select
+                id="game-sort"
+                name="sort"
+                class="filter-control"
+            >
+                <option value="" {% if not sort %}selected{% endif %}>
+                    Default
+                </option>
+
+                <option value="rating_desc" {% if sort == "rating_desc" %}selected{% endif %}>
+                    Rating: High → Low
+                </option>
+
+                <option value="rating_asc" {% if sort == "rating_asc" %}selected{% endif %}>
+                    Rating: Low → High
+                </option>
+
+                <option value="title_asc" {% if sort == "title_asc" %}selected{% endif %}>
+                    Title: A → Z
+                </option>
+
+                <option value="title_desc" {% if sort == "title_desc" %}selected{% endif %}>
+                    Title: Z → A
+                </option>
+            </select>
+        </div>
+
+        <button type="submit" class="filter-button">
+            Search
+        </button>
+
     </form>
 
     <section class="games-section">
