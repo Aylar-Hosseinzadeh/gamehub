@@ -6,6 +6,7 @@ from .forms import GameForm
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 
 def game_list(request):
     search_query = request.GET.get("search")
@@ -94,8 +95,8 @@ def detail(request, pk):
         }
     )
 
-from django.contrib.auth.decorators import login_required
 @login_required(login_url="/login/")
+@require_POST
 def add_to_library(request, pk):
     game = get_object_or_404(Game, pk=pk)
 
@@ -104,7 +105,9 @@ def add_to_library(request, pk):
 
     return redirect("game_detail", pk=game.pk)
 
+
 @login_required(login_url="/login/")
+@require_POST
 def remove_from_library(request, pk):
     game = get_object_or_404(Game, pk=pk)
 
