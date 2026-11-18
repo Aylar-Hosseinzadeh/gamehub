@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+from decimal import Decimal, InvalidOperation
 
 def game_list(request):
     search_query = request.GET.get("search")
@@ -23,7 +24,27 @@ def game_list(request):
         games = games.filter(title__icontains=search_query)
 
     if rating:
-        games = games.filter(rating__gte=rating)
+        try:
+            rating_value = Decimal(rating)
+
+            if not rating_value.is_finite():
+                raise InvalidOperation
+
+            if Decimal("0") <= rating_value <= Decimal("10"):
+                games = games.filter(rating__gte=rating_value)
+            else:
+                messages.warning(
+                    request,
+                    "Rating filter must be between 0 and 10."
+                )
+                rating = None
+
+        except InvalidOperation:
+            messages.warning(
+                request,
+                "Please enter a valid rating."
+            )
+            rating = None
 
     sort_options = {
         "rating_desc": "-rating",

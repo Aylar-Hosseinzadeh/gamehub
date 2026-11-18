@@ -1,9 +1,11 @@
 from datetime import date
 from decimal import Decimal
+from .forms import GameForm
 
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.test import Client 
 
 from .models import Game
 
@@ -448,3 +450,215 @@ class AddGameAuthorizationTests(TestCase):
         self.assertFalse(
             Game.objects.filter(title="Hollow Knight").exists()
         )
+
+class CSRFSecurityTests(TestCase):
+    
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="csrf_user",
+            password="testpassword123"
+        )
+
+        self.staff_user = User.objects.create_user(
+            username="csrf_staff",
+            password="testpassword123",
+            is_staff=True
+        )
+
+        self.game = Game.objects.create(
+            title="Hades",
+            description="A rogue-like dungeon crawler.",
+            release_date=date(2020, 9, 17),
+            developer="Supergiant Games",
+            publisher="Supergiant Games",
+            rating=Decimal("9.2")
+        )
+
+        self.csrf_client = Client(enforce_csrf_checks=True)
+
+    def test_login_rejects_post_without_csrf_token(self):
+
+        response = self.csrf_client.post(
+            reverse("login"),
+            {
+                "username": "csrf_user",
+                "password": "testpassword123",
+            }
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_logout_rejects_post_without_csrf_token(self):
+
+        self.csrf_client.force_login(self.user)
+
+        response = self.csrf_client.post(
+            reverse("logout")
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_add_to_library_rejects_post_without_csrf_token(self):
+
+        self.csrf_client.force_login(self.user)
+
+        response = self.csrf_client.post(
+            reverse("add_to_library", args=[self.game.pk])
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_remove_from_library_rejects_post_without_csrf_token(self):
+
+        self.game.users.add(self.user)
+
+        self.csrf_client.force_login(self.user)
+
+        response = self.csrf_client.post(
+            reverse("remove_from_library", args=[self.game.pk])
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_add_game_rejects_post_without_csrf_token(self):
+
+        self.csrf_client.force_login(self.staff_user)
+
+        response = self.csrf_client.post(
+            reverse("game_add"),
+            {
+                "title": "Hollow Knight",
+                "description": "A challenging action adventure.",
+                "release_date": "2017-02-24",
+                "developer": "Team Cherry",
+                "publisher": "Team Cherry",
+                "rating": "9.1",
+            }
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_valid_csrf_token_allows_library_operation(self):
+
+        self.csrf_client.force_login(self.user)
+
+        detail_url = reverse(
+            "game_detail",
+            args=[self.game.pk]
+        )
+
+        response = self.csrf_client.get(detail_url)
+
+        csrf_token = response.cookies["csrftoken"].value
+
+        response = self.csrf_client.post(
+            reverse("add_to_library", args=[self.game.pk]),
+            HTTP_X_CSRFTOKEN=csrf_token
+        )
+
+        self.assertRedirects(
+            response,
+            detail_url
+        )
+
+        self.assertTrue(
+            self.game.users.filter(pk=self.user.pk).exists()
+        )
+
+class GameInputValidationTests(TestCase):
+    
+    def setUp(self):
+        self.game = Game.objects.create(
+            title="Hades",
+            description="A rogue-like dungeon crawler.",
+            release_date=date(2020, 9, 17),
+            developer="Supergiant Games",
+            publisher="Supergiant Games",
+            rating=Decimal("9.2")
+        )
+
+        self.second_game = Game.objects.create(
+            title="Celeste",
+            description="A platforming adventure.",
+            release_date=date(2018, 1, 25),
+            developer="Maddy Makes Games",
+            publisher="Maddy Makes Games",
+            rating=Decimal("8.5")
+        )
+
+    def test_valid_rating_filter(self):
+
+        response = self.client.get(
+            reverse("game_list"),
+            {"rating": "9.0"}
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(
+            response.context["games"].paginator.count,
+            1
+        )
+
+    def test_invalid_rating_filter_does_not_crash(self):
+
+        response = self.client.get(
+            reverse("game_list"),
+            {"rating": "abc"}
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(
+            response.context["games"].paginator.count,
+            2
+        )
+
+    def test_rating_filter_rejects_out_of_range_values(self):
+
+        for rating in ["-1", "11"]:
+            with self.subTest(rating=rating):
+
+                response = self.client.get(
+                    reverse("game_list"),
+                    {"rating": rating}
+                )
+
+                self.assertEqual(response.status_code, 200)
+
+                self.assertEqual(
+                    response.context["games"].paginator.count,
+                    2
+                )
+
+    def test_game_form_rejects_rating_above_10(self):
+
+        form = GameForm(
+            data={
+                "title": "Test Game",
+                "description": "Test description.",
+                "release_date": "2020-01-01",
+                "developer": "Test Developer",
+                "publisher": "Test Publisher",
+                "rating": "11",
+            }
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("rating", form.errors)
+
+    def test_game_form_rejects_negative_rating(self):
+
+        form = GameForm(
+            data={
+                "title": "Test Game",
+                "description": "Test description.",
+                "release_date": "2020-01-01",
+                "developer": "Test Developer",
+                "publisher": "Test Publisher",
+                "rating": "-1",
+            }
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("rating", form.errors)
