@@ -54,7 +54,9 @@ def game_list(request):
     }
 
     if sort in sort_options:
-        games = games.order_by(sort_options[sort])
+        games = games.order_by(sort_options[sort], "pk")
+    else:
+        games = games.order_by("pk")
 
     paginator = Paginator(games, 2)
     page_obj = paginator.get_page(page_number)

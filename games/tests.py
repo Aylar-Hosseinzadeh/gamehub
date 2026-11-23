@@ -662,3 +662,65 @@ class GameInputValidationTests(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertIn("rating", form.errors)
+
+
+class DatabaseOptimizationTests(TestCase):
+    
+    def setUp(self):
+        self.user1 = User.objects.create_user(
+            username="user1",
+            password="testpassword123"
+        )
+
+        self.user2 = User.objects.create_user(
+            username="user2",
+            password="testpassword123"
+        )
+
+        self.game1 = Game.objects.create(
+            title="Game One",
+            description="First test game.",
+            release_date=date(2020, 1, 1),
+            developer="Developer One",
+            publisher="Publisher One",
+            rating=Decimal("9.0")
+        )
+
+        self.game2 = Game.objects.create(
+            title="Game Two",
+            description="Second test game.",
+            release_date=date(2021, 1, 1),
+            developer="Developer Two",
+            publisher="Publisher Two",
+            rating=Decimal("8.5")
+        )
+
+        self.game3 = Game.objects.create(
+            title="Game Three",
+            description="Third test game.",
+            release_date=date(2022, 1, 1),
+            developer="Developer Three",
+            publisher="Publisher Three",
+            rating=Decimal("8.0")
+        )
+
+        self.game1.users.add(self.user1)
+        self.game2.users.add(self.user2)
+
+    def test_without_prefetch_related(self):
+
+        with self.assertNumQueries(4):
+
+            games = Game.objects.all()
+
+            for game in games:
+                list(game.users.all())
+
+    def test_with_prefetch_related(self):
+
+        with self.assertNumQueries(2):
+
+            games = Game.objects.prefetch_related("users")
+
+            for game in games:
+                list(game.users.all())
