@@ -1,13 +1,15 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.admin.views.decorators import staff_member_required
-from .models import Game
-from .forms import GameForm
-from django.core.paginator import Paginator
-from django.contrib import messages
-from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
+
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.http import require_POST
+
+from .forms import GameForm
+from .models import Game
 
 def game_list(request):
     search_query = request.GET.get("search")
@@ -77,7 +79,6 @@ def home(request):
     return render(request, "games/home.html")
 
 def login_view(request):
-    print(request.GET)
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")

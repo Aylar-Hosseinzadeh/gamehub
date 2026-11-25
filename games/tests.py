@@ -1,12 +1,11 @@
 from datetime import date
 from decimal import Decimal
-from .forms import GameForm
 
-from django.test import TestCase
-from django.urls import reverse
 from django.contrib.auth.models import User
-from django.test import Client 
+from django.test import Client, TestCase
+from django.urls import reverse
 
+from .forms import GameForm
 from .models import Game
 
 
